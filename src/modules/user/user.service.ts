@@ -34,7 +34,7 @@ export class UserService {
       const user = await this.prisma.users.create({
         data: {
           email: createUserDto.email,
-          name: createUserDto.name,
+          username: createUserDto.username,
           password: hashedPassword
         }
       });
@@ -68,11 +68,7 @@ export class UserService {
       where: {
         id: id
       },
-      data: {
-        email: updateUserDto.email,
-        name: updateUserDto.name,
-        password: updateUserDto.password
-      }
+      data: updateUserDto
     });
   }
 

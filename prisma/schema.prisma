@@ -16,7 +16,7 @@ datasource db {
 model Users {
   id       String    @id @default(uuid())
   email    String    @unique
-  name     String
+  username String
   password String
   diabled  Boolean   @default(false)
   Surveys  Surveys[]
