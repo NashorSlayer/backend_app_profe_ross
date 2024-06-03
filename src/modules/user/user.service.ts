@@ -1,10 +1,9 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Users } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/entities';
 
 @Injectable()
 export class UserService {
@@ -18,17 +17,29 @@ export class UserService {
     return bcrypt.hash(password, saltRounds);
   }
 
-  async create(createUserDto: CreateUserDto): Promise<Users> {
-    const hashedPassword = this.hashPassword(createUserDto.password);
-    console.log("hashed_password:", hashedPassword?.toString());
-    const user = await this.prisma.users.create({
-      data: {
-        email: createUserDto.email,
-        name: createUserDto.name,
-        password: hashedPassword?.toString()
+  private async getUserByEmail(email: string): Promise<Users> {
+    return await this.prisma.users.findUnique({
+      where: {
+        email: email
       }
     });
-    return user
+  }
+
+  async create(createUserDto: CreateUserDto): Promise<Users> {
+    const userExists = await this.getUserByEmail(createUserDto.email);
+    if (userExists) {
+      throw new BadRequestException('User already exists');
+    } else {
+      const hashedPassword = await this.hashPassword(createUserDto.password);
+      const user = await this.prisma.users.create({
+        data: {
+          email: createUserDto.email,
+          name: createUserDto.name,
+          password: hashedPassword
+        }
+      });
+      return user;
+    }
   }
 
 
@@ -42,27 +53,43 @@ export class UserService {
         id: id
       }
     });
+
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
+    const user = await this.getUserByEmail(updateUserDto.email);
+    if (!user) {
+      throw new BadRequestException('User does not exist');
+    }
+    if (updateUserDto.password) {
+      updateUserDto.password = await this.hashPassword(updateUserDto.password);
+    }
     return await this.prisma.users.update({
       where: {
         id: id
       },
-      data: updateUserDto
+      data: {
+        email: updateUserDto.email,
+        name: updateUserDto.name,
+        password: updateUserDto.password
+      }
     });
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<Users> {
+    const userFound = await this.prisma.users.findUnique({
+      where: {
+        id: id
+      }
+    });
+    if (!userFound) {
+      throw new BadRequestException('User does not exist');
+    }
     const user = await this.prisma.users.delete({
       where: {
         id: id
       }
     })
-    // return {
-    //   statusCode: HttpStatus.OK,
-    //   message: "User deleted successfully"
-    // }
     return user;
   }
 }
