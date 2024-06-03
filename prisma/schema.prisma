@@ -13,9 +13,53 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id      String  @id @default(uuid())
-  email   String  @unique
-  name    String
-  diabled Boolean @default(false)
+model Users {
+  id       String    @id @default(uuid())
+  email    String    @unique
+  username String
+  password String
+  diabled  Boolean   @default(false)
+  Surveys  Surveys[]
+}
+
+model Areas {
+  id            String          @id @default(uuid())
+  name          String
+  surveys_areas surveys_areas[]
+  Answer_areas  Answer_areas[]
+}
+
+model Surveys {
+  id                String   @id @default(uuid())
+  title             String
+  description       String
+  time_range_start  DateTime
+  time_range_end    DateTime
+  answer_time_start DateTime
+  answer_time_end   DateTime
+  user_id           String
+  disabled          Boolean  @default(false)
+
+  user          Users           @relation(fields: [user_id], references: [id])
+  surveys_areas surveys_areas[]
+  Answer_areas  Answer_areas[]
+}
+
+model surveys_areas {
+  id        String @id @default(uuid())
+  survey_id String
+  area_id   String
+
+  survey Surveys @relation(fields: [survey_id], references: [id])
+  area   Areas   @relation(fields: [area_id], references: [id])
+}
+
+model Answer_areas {
+  id        String @id @default(uuid())
+  survey_id String
+  area_id   String
+  time      Int
+
+  survey Surveys @relation(fields: [survey_id], references: [id])
+  area   Areas   @relation(fields: [area_id], references: [id])
 }

@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { User } from '@prisma/client';
+import { Users } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -11,24 +12,59 @@ export class UserService {
     private prisma: PrismaService
   ) { }
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  private async hashPassword(password: string): Promise<string> {
+    const saltRounds = 10;
+    return bcrypt.hash(password, saltRounds);
   }
 
-  async findAll(): Promise<User[]> {
-    return await this.prisma.user.findMany();
-  }
-
-  async findOne(id: string) {
-    return await this.prisma.user.findUnique({
+  async getUserByEmail(email: string): Promise<Users> {
+    return await this.prisma.users.findUnique({
       where: {
-        id: id
+        email: email
       }
     });
   }
 
+  async create(createUserDto: CreateUserDto): Promise<Users> {
+    const userExists = await this.getUserByEmail(createUserDto.email);
+    if (userExists) {
+      throw new BadRequestException('User already exists');
+    } else {
+      const hashedPassword = await this.hashPassword(createUserDto.password);
+      const user = await this.prisma.users.create({
+        data: {
+          email: createUserDto.email,
+          username: createUserDto.username,
+          password: hashedPassword
+        }
+      });
+      return user;
+    }
+  }
+
+
+  async findAll(): Promise<Users[]> {
+    return await this.prisma.users.findMany();
+  }
+
+  async findOne(id: string) {
+    return await this.prisma.users.findUnique({
+      where: {
+        id: id
+      }
+    });
+
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto) {
-    return await this.prisma.user.update({
+    const user = await this.getUserByEmail(updateUserDto.email);
+    if (!user) {
+      throw new BadRequestException('User does not exist');
+    }
+    if (updateUserDto.password) {
+      updateUserDto.password = await this.hashPassword(updateUserDto.password);
+    }
+    return await this.prisma.users.update({
       where: {
         id: id
       },
@@ -36,7 +72,20 @@ export class UserService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string): Promise<Users> {
+    const userFound = await this.prisma.users.findUnique({
+      where: {
+        id: id
+      }
+    });
+    if (!userFound) {
+      throw new BadRequestException('User does not exist');
+    }
+    const user = await this.prisma.users.delete({
+      where: {
+        id: id
+      }
+    })
+    return user;
   }
 }
