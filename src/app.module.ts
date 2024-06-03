@@ -5,11 +5,12 @@ import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';
 import { AreaModule } from './modules/area/area.module';
 import { SurveyModule } from './modules/survey/survey.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 
 
 @Module({
-  imports: [UserModule, AreaModule, SurveyModule],
+  imports: [UserModule, AreaModule, SurveyModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })

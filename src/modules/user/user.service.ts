@@ -17,7 +17,7 @@ export class UserService {
     return bcrypt.hash(password, saltRounds);
   }
 
-  private async getUserByEmail(email: string): Promise<Users> {
+  async getUserByEmail(email: string): Promise<Users> {
     return await this.prisma.users.findUnique({
       where: {
         email: email
