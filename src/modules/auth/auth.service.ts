@@ -13,7 +13,7 @@ export class AuthService {
         private jwtService: JwtService
     ) { }
 
-    async SignIn(signInUserDto: SignInUserDto): Promise<{ access_token: string }> {
+    async signIn(signInUserDto: SignInUserDto): Promise<{ access_token: string }> {
         const userFound = await this.userService.getUserByEmail(signInUserDto.email);
         if (!userFound) {
             throw new Error('User not found');
@@ -33,7 +33,7 @@ export class AuthService {
     }
 
 
-    async SignUp(signUpUserDto: SignUpUserDto) {
+    async signUp(signUpUserDto: SignUpUserDto) {
         const userFound = await this.userService.getUserByEmail(signUpUserDto.email);
         if (userFound) {
             throw new BadRequestException('User already exists');
