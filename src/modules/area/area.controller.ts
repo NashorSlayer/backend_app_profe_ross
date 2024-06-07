@@ -1,4 +1,4 @@
-import { Controller, Req, Get, Post, Body, Patch, Param, Delete, HttpCode, Header } from '@nestjs/common';
+import { Controller, Req, Get, Post, Body, Patch, Param, Delete, HttpCode, Header, HttpStatus } from '@nestjs/common';
 import { AreaService } from './area.service';
 import { CreateAreaDto } from './dto/create-area.dto';
 import { UpdateAreaDto } from './dto/update-area.dto';
@@ -8,29 +8,29 @@ export class AreaController {
   constructor(private readonly areaService: AreaService) { }
 
   @Post()
-  @HttpCode(201)
-  @Header('Cache-Control', 'none')
+  @HttpCode(HttpStatus.CREATED)
   create(@Body() createAreaDto: CreateAreaDto) {
     return this.areaService.create(createAreaDto);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Get()
-  findAll(@Req() req: Request): string {
-    return this.areaService.findAll();
+  async findAll(@Req() req: Request) {
+    return await this.areaService.findAll();
   }
-
+  @HttpCode(HttpStatus.OK)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.areaService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.areaService.findOne(id);
   }
-
+  @HttpCode(HttpStatus.OK)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAreaDto: UpdateAreaDto) {
-    return this.areaService.update(+id, updateAreaDto);
+  async update(@Param('id') id: string, @Body() updateAreaDto: UpdateAreaDto) {
+    return await this.areaService.update(id, updateAreaDto);
   }
-
+  @HttpCode(HttpStatus.OK)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.areaService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.areaService.remove(id);
   }
 }

@@ -13,10 +13,10 @@ export class AuthService {
         private jwtService: JwtService
     ) { }
 
-    async signIn(signInUserDto: SignInUserDto): Promise<{ access_token: string }> {
+    async signIn(signInUserDto: SignInUserDto): Promise<any> {
         const userFound = await this.userService.getUserByEmail(signInUserDto.email);
         if (!userFound) {
-            throw new Error('User not found');
+            throw new UnauthorizedException('User not found');
         }
         const passwordMatch = await bcrypt.compare(signInUserDto.password, userFound.password);
         if (!passwordMatch) {
@@ -26,9 +26,9 @@ export class AuthService {
             sub: userFound.id,
             username: userFound.username,
         }
-        return {
-            access_token: await this.jwtService.signAsync(payload)
-        }
+
+        const access_token = await this.jwtService.signAsync(payload)
+        return { user: { ...userFound }, access_token: access_token };
 
     }
 
