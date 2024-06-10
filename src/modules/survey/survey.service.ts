@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSurveyDto } from './dto/create-survey.dto';
 import { UpdateSurveyDto } from './dto/update-survey.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { Surveys } from '@prisma/client';
 
 @Injectable()

@@ -5,7 +5,7 @@ import { UpdateAnswerAreaDto } from './dto/update-answer_area.dto';
 
 @Controller('answer-areas')
 export class AnswerAreasController {
-  constructor(private readonly answerAreasService: AnswerAreasService) {}
+  constructor(private readonly answerAreasService: AnswerAreasService) { }
 
   @Post()
   create(@Body() createAnswerAreaDto: CreateAnswerAreaDto) {
@@ -19,16 +19,16 @@ export class AnswerAreasController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.answerAreasService.findOne(+id);
+    return this.answerAreasService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAnswerAreaDto: UpdateAnswerAreaDto) {
-    return this.answerAreasService.update(+id, updateAnswerAreaDto);
+    return this.answerAreasService.update(id, updateAnswerAreaDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.answerAreasService.remove(+id);
+    return this.answerAreasService.remove(id);
   }
 }

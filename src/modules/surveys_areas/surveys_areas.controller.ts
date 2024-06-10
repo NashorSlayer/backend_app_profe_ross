@@ -5,7 +5,7 @@ import { UpdateSurveysAreaDto } from './dto/update-surveys_area.dto';
 
 @Controller('surveys-areas')
 export class SurveysAreasController {
-  constructor(private readonly surveysAreasService: SurveysAreasService) {}
+  constructor(private readonly surveysAreasService: SurveysAreasService) { }
 
   @Post()
   create(@Body() createSurveysAreaDto: CreateSurveysAreaDto) {
@@ -19,16 +19,16 @@ export class SurveysAreasController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.surveysAreasService.findOne(+id);
+    return this.surveysAreasService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateSurveysAreaDto: UpdateSurveysAreaDto) {
-    return this.surveysAreasService.update(+id, updateSurveysAreaDto);
+    return this.surveysAreasService.update(id, updateSurveysAreaDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.surveysAreasService.remove(+id);
+    return this.surveysAreasService.remove(id);
   }
 }
