@@ -13,15 +13,15 @@ export class AuthController {
   ) { }
 
   @HttpCode(HttpStatus.OK)
-  @Post('SignIn')
+  @Post('signIn')
   async SigIn(@Body() signInUserDto: SignInUserDto) {
-    return this.authService.SignIn(signInUserDto);
+    return this.authService.signIn(signInUserDto);
   }
 
   @HttpCode(HttpStatus.CREATED)
-  @Post('SignUp')
+  @Post('signUp')
   async SigUp(@Body() signUpUserDto: SignUpUserDto) {
-    return this.authService.SignUp(signUpUserDto);
+    return this.authService.signUp(signUpUserDto);
   }
 
   @UseGuards(AuthGuard)

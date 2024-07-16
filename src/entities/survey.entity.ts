@@ -2,7 +2,7 @@
 import { User } from "./user.entity";
 
 export class Survey {
-    id: number;
+    id: string;
     title: string;
     description: string;
     time_range_start: Date;
