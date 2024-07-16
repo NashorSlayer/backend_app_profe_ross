@@ -9,27 +9,27 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
-model Users {
+model users {
   id       String    @id @default(uuid())
   email    String    @unique
   username String
   password String
-  diabled  Boolean   @default(false)
-  Surveys  Surveys[]
+  Surveys  surveys[]
 }
 
-model Areas {
+model areas {
   id            String          @id @default(uuid())
-  name          String
+  name          String          @unique
   surveys_areas surveys_areas[]
-  Answer_areas  Answer_areas[]
+  Answer_areas  answer_areas[]
 }
 
-model Surveys {
+model surveys {
   id                String   @id @default(uuid())
   title             String
   description       String
@@ -40,9 +40,9 @@ model Surveys {
   user_id           String
   disabled          Boolean  @default(false)
 
-  user          Users           @relation(fields: [user_id], references: [id])
+  user          users           @relation(fields: [user_id], references: [id])
   surveys_areas surveys_areas[]
-  Answer_areas  Answer_areas[]
+  Answer_areas  answer_areas[]
 }
 
 model surveys_areas {
@@ -50,16 +50,16 @@ model surveys_areas {
   survey_id String
   area_id   String
 
-  survey Surveys @relation(fields: [survey_id], references: [id])
-  area   Areas   @relation(fields: [area_id], references: [id])
+  survey surveys @relation(fields: [survey_id], references: [id])
+  area   areas   @relation(fields: [area_id], references: [id])
 }
 
-model Answer_areas {
+model answer_areas {
   id        String @id @default(uuid())
   survey_id String
   area_id   String
   time      Int
 
-  survey Surveys @relation(fields: [survey_id], references: [id])
-  area   Areas   @relation(fields: [area_id], references: [id])
+  survey surveys @relation(fields: [survey_id], references: [id])
+  area   areas   @relation(fields: [area_id], references: [id])
 }

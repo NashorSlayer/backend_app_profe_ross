@@ -3,15 +3,20 @@ import { CreateSurveyDto } from './dto/create-survey.dto';
 import { UpdateSurveyDto } from './dto/update-survey.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Surveys } from '@prisma/client';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class SurveyService {
 
   constructor(
     private readonly prismaService: PrismaService,
+    private readonly userService: UserService
   ) { }
 
   async create(createSurveyDto: CreateSurveyDto): Promise<Surveys> {
+    const user = await this.userService.findOne(createSurveyDto.user.id)
+    if (!user) throw new Error("User not found")
+
     return await this.prismaService.surveys.create({
       data: {
         title: createSurveyDto.title,

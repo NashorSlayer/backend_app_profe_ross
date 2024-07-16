@@ -33,4 +33,5 @@ export class AreaController {
   async remove(@Param('id') id: string) {
     return await this.areaService.remove(id);
   }
+
 }

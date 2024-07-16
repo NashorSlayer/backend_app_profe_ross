@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateAreaDto } from './dto/create-area.dto';
 import { UpdateAreaDto } from './dto/update-area.dto';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -11,7 +11,15 @@ export class AreaService {
     private prisma: PrismaService,
   ) { }
 
+  private async findAreaByName(name: string): Promise<Areas> {
+    return await this.prisma.areas.findFirst({
+      where: { name: name }
+    });
+  }
+
   async create(createAreaDto: CreateAreaDto): Promise<Areas> {
+    const area = await this.findAreaByName(createAreaDto.name);
+    if (area) throw new BadRequestException('Area already exists');
     return await this.prisma.areas.create({
       data: { name: createAreaDto.name }
     });
@@ -39,4 +47,5 @@ export class AreaService {
       where: { id: id }
     });
   }
+
 }
