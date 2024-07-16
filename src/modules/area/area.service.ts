@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateAreaDto } from './dto/create-area.dto';
 import { UpdateAreaDto } from './dto/update-area.dto';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Areas } from '@prisma/client';
+import { areas } from '@prisma/client';
 
 @Injectable()
 export class AreaService {
@@ -11,13 +11,13 @@ export class AreaService {
     private prisma: PrismaService,
   ) { }
 
-  private async findAreaByName(name: string): Promise<Areas> {
+  private async findAreaByName(name: string): Promise<areas> {
     return await this.prisma.areas.findFirst({
       where: { name: name }
     });
   }
 
-  async create(createAreaDto: CreateAreaDto): Promise<Areas> {
+  async create(createAreaDto: CreateAreaDto): Promise<areas> {
     const area = await this.findAreaByName(createAreaDto.name);
     if (area) throw new BadRequestException('Area already exists');
     return await this.prisma.areas.create({
@@ -25,11 +25,11 @@ export class AreaService {
     });
   }
 
-  async findAll(): Promise<Areas[]> {
+  async findAll(): Promise<areas[]> {
     return await this.prisma.areas.findMany();
   }
 
-  async findOne(id: string): Promise<Areas> {
+  async findOne(id: string): Promise<areas> {
     return await this.prisma.areas.findUnique({
       where: { id: id }
     })
@@ -42,7 +42,7 @@ export class AreaService {
     });
   }
 
-  async remove(id: string): Promise<Areas> {
+  async remove(id: string): Promise<areas> {
     return await this.prisma.areas.delete({
       where: { id: id }
     });

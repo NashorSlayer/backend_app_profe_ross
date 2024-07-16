@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateSurveyDto } from './dto/create-survey.dto';
 import { UpdateSurveyDto } from './dto/update-survey.dto';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Surveys } from '@prisma/client';
+import { surveys } from '@prisma/client';
 import { UserService } from '../user/user.service';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class SurveyService {
     private readonly userService: UserService
   ) { }
 
-  async create(createSurveyDto: CreateSurveyDto): Promise<Surveys> {
+  async create(createSurveyDto: CreateSurveyDto): Promise<surveys> {
     const user = await this.userService.findOne(createSurveyDto.user.id)
     if (!user) throw new Error("User not found")
 
@@ -35,7 +35,7 @@ export class SurveyService {
     });
   }
 
-  async findAll(): Promise<Surveys[]> {
+  async findAll(): Promise<surveys[]> {
     return await this.prismaService.surveys.findMany({
       include: {
         user: true,
@@ -43,7 +43,7 @@ export class SurveyService {
     });
   }
 
-  async findOne(id: string): Promise<Surveys> {
+  async findOne(id: string): Promise<surveys> {
     return await this.prismaService.surveys.findUnique({
       where: { id: id },
       include: {
@@ -52,7 +52,7 @@ export class SurveyService {
     });
   }
 
-  update(id: string, updateSurveyDto: UpdateSurveyDto): Promise<Surveys> {
+  update(id: string, updateSurveyDto: UpdateSurveyDto): Promise<surveys> {
     return this.prismaService.surveys.update({
       where: { id: id },
       data: {
@@ -70,7 +70,7 @@ export class SurveyService {
     })
   }
 
-  async remove(id: string): Promise<Surveys> {
+  async remove(id: string): Promise<surveys> {
     return await this.prismaService.surveys.delete({
       where: { id: id },
       include: {
