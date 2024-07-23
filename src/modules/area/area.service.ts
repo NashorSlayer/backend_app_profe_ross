@@ -36,8 +36,11 @@ export class AreaService {
   }
 
   async update(id: string, updateAreaDto: UpdateAreaDto) {
+    const areaFound = await this.findOne(id);
+    if (!areaFound) throw new BadRequestException('Area not found');
+    console.log("🚀 ~ AreaService ~ update ~ areaFound:", areaFound)
     return await this.prisma.areas.update({
-      where: { id: id },
+      where: { id: areaFound.id },
       data: { ...updateAreaDto }
     });
   }
