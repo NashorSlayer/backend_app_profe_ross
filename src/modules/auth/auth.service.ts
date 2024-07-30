@@ -15,18 +15,14 @@ export class AuthService {
 
     async signIn(signInUserDto: SignInUserDto): Promise<any> {
         const userFound = await this.userService.getUserByEmail(signInUserDto.email);
-        if (!userFound) {
-            throw new UnauthorizedException('User not found');
-        }
+        if (!userFound) throw new UnauthorizedException('User not found');
+
         const passwordMatch = await bcrypt.compare(signInUserDto.password, userFound.password);
-        if (!passwordMatch) {
-            throw new UnauthorizedException('Invalid password');
-        }
+        if (!passwordMatch) throw new UnauthorizedException('Invalid password');
         const payload = {
             sub: userFound.id,
             username: userFound.username,
-        }
-
+        };
         const access_token = await this.jwtService.signAsync(payload)
         return { user: { ...userFound }, access_token: access_token };
 
