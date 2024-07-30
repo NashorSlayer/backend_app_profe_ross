@@ -28,7 +28,7 @@ export class AreasFormsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Body() areas: string[]) {
-    return this.areasFormsService.remove(id, areas);
+  remove(@Param('id') id: string, @Body() area: string) {
+    return this.areasFormsService.removeOneAreaFromForm(id, area);
   }
 }

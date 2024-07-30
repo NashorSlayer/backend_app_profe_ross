@@ -138,8 +138,18 @@ export class AreasFormsService {
 
   }
 
-  async remove(id: string, areas: string[]) {
+  async removeOneAreaFromForm(id: string, area: string) {
     const formFound = await this.formService.findOne(id);
     if (!formFound) throw new BadRequestException('Form not found');
+
+
+    const areasFound = await this.areaService.findAreaByName(area);
+    if (!areasFound) throw new BadRequestException('Areas not found');
+
+    try {
+      return null
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }
