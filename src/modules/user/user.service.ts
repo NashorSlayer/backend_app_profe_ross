@@ -1,9 +1,9 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../../prisma/prisma.service';
-import { users } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { IUser } from 'src/interfaces/interface';
 
 @Injectable()
 export class UserService {
@@ -17,15 +17,23 @@ export class UserService {
     return bcrypt.hash(password, saltRounds);
   }
 
-  async getUserByEmail(email: string): Promise<users> {
-    return await this.prisma.users.findUnique({
+  async getUserByEmail(email: string): Promise<IUser> {
+    const userFound = await this.prisma.users.findUnique({
       where: {
         email: email
+      },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        password: true
       }
     });
+    if (!userFound) throw new BadRequestException('User does not exist');
+    return userFound;
   }
 
-  async create(createUserDto: CreateUserDto): Promise<users> {
+  async create(createUserDto: CreateUserDto): Promise<IUser> {
     const userExists = await this.getUserByEmail(createUserDto.email);
     if (userExists) {
       throw new BadRequestException('User already exists');
@@ -36,31 +44,46 @@ export class UserService {
           email: createUserDto.email,
           username: createUserDto.username,
           password: hashedPassword
+        },
+        select: {
+          id: true,
+          email: true,
+          username: true,
         }
       });
       return user;
     }
   }
 
-
-  async findAll(): Promise<users[]> {
-    return await this.prisma.users.findMany();
-  }
-
-  async findOne(id: string) {
-    return await this.prisma.users.findUnique({
-      where: {
-        id: id
+  async findAll(): Promise<IUser[]> {
+    return await this.prisma.users.findMany({
+      select: {
+        id: true,
+        email: true,
+        username: true,
       }
     });
+  }
 
+  async findOne(id: string): Promise<IUser> {
+    const userFound = await this.prisma.users.findUnique({
+      where: {
+        id: id
+      },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+      }
+    });
+    if (!userFound) throw new BadRequestException('User does not exist');
+    return userFound;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     const user = await this.getUserByEmail(updateUserDto.email);
-    if (!user) {
-      throw new BadRequestException('User does not exist');
-    }
+    if (!user) throw new BadRequestException('User does not exist');
+
     if (updateUserDto.password) {
       updateUserDto.password = await this.hashPassword(updateUserDto.password);
     }
@@ -68,22 +91,26 @@ export class UserService {
       where: {
         id: id
       },
-      data: updateUserDto
+      data: updateUserDto,
+      select: {
+        id: true,
+        email: true,
+        username: true,
+      }
     });
   }
 
-  async remove(id: string): Promise<users> {
-    const userFound = await this.prisma.users.findUnique({
-      where: {
-        id: id
-      }
-    });
-    if (!userFound) {
-      throw new BadRequestException('User does not exist');
-    }
+  async remove(id: string): Promise<IUser> {
+    const userFound = await this.findOne(id);
+    if (!userFound) throw new BadRequestException('User does not exist');
     const user = await this.prisma.users.delete({
       where: {
-        id: id
+        id: userFound.id
+      },
+      select: {
+        id: true,
+        email: true,
+        username: true,
       }
     })
     return user;

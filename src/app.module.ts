@@ -4,15 +4,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';
 import { AreaModule } from './modules/area/area.module';
-import { SurveyModule } from './modules/survey/survey.module';
+import { FormModule } from './modules/forms/forms.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { SurveysAreasModule } from './modules/surveys_areas/surveys_areas.module';
-import { AnswerAreasModule } from './modules/answer_areas/answer_areas.module';
+import { AreasFormsModule } from './modules/areas_forms/areas_forms.module';
+import { AnswerModule } from './modules/answers/answer.module';
 
 
 
 @Module({
-  imports: [UserModule, AreaModule, SurveyModule, AuthModule, SurveysAreasModule, AnswerAreasModule],
+  imports: [UserModule, AreaModule, FormModule, AuthModule, AreasFormsModule, AnswerModule],
   controllers: [AppController],
   providers: [AppService],
 })

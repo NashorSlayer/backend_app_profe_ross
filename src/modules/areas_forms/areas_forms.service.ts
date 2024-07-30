@@ -1,62 +1,70 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSurveysAreaDto } from './dto/create-surveys_area.dto';
-import { UpdateSurveysAreaDto } from './dto/update-surveys_area.dto';
+import { CreateAreasFormsDto } from './dto/create-areas_forms.dto';
+import { UpdateAreasFormsDto } from './dto/update-areas_forms.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AreaService } from '../area/area.service';
-import { SurveyService } from '../survey/survey.service';
+import { FormService } from '../forms/forms.service';
 
 @Injectable()
-export class SurveysAreasService {
+export class AreasFormsService {
 
   constructor(
     private readonly prismaService: PrismaService,
     private readonly areaService: AreaService,
-    private readonly surveyService: SurveyService,
+    private readonly formService: FormService,
   ) { }
 
-  create(createSurveysAreaDto: CreateSurveysAreaDto) {
+  create(createSurveysAreaDto: CreateAreasFormsDto) {
     const areaFound = this.areaService.findOne(createSurveysAreaDto.Area.id);
     if (!areaFound) throw new Error('Area not found');
-    const surveyFound = this.surveyService.findOne(createSurveysAreaDto.Survey.id);
+    const surveyFound = this.formService.findOne(createSurveysAreaDto.Form.id);
     if (!surveyFound) throw new Error('Survey not found');
-    return this.prismaService.surveys_areas.create({
+    return this.prismaService.areas_forms.create({
       data: {
         area: {
           connect: {
             id: createSurveysAreaDto.Area.id
           }
         },
-        survey: {
+        forms: {
           connect: {
-            id: createSurveysAreaDto.Survey.id
+            id: createSurveysAreaDto.Form.id
           }
         }
+      },
+      include: {
+        area: true,
+        forms: true,
       }
     });
   }
 
   findAll() {
-    return this.prismaService.surveys_areas.findMany(
+    return this.prismaService.areas_forms.findMany(
       {
         include: {
           area: true,
-          survey: true,
+          forms: true,
         }
       }
     );
   }
 
   findOne(id: string) {
-    return this.prismaService.surveys_areas.findUnique({
+    return this.prismaService.areas_forms.findUnique({
       where: { id: id },
+      include: {
+        area: true,
+        forms: true,
+      }
     });
   }
 
-  async update(id: string, updateSurveysAreaDto: UpdateSurveysAreaDto) {
+  async update(id: string, UpdateAreasFormsDto: UpdateAreasFormsDto) {
 
-    const areaFound = await this.areaService.findOne(updateSurveysAreaDto.Area.id);
+    const areaFound = await this.areaService.findOne(UpdateAreasFormsDto.Area.id);
     if (!areaFound) throw new Error('Area not found');
-    return await this.prismaService.surveys_areas.update({
+    return await this.prismaService.areas_forms.update({
       where: { id: id },
       data: {
         area: {
@@ -65,15 +73,19 @@ export class SurveysAreasService {
           }
         },
       },
+      include: {
+        area: true,
+        forms: true,
+      }
     });
   }
 
   async remove(id: string) {
-    return await this.prismaService.surveys_areas.delete({
+    return await this.prismaService.areas_forms.delete({
       where: { id: id },
       include: {
         area: true,
-        survey: true,
+        forms: true,
       }
     });
   }
