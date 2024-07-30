@@ -21,7 +21,7 @@ export class AreaService {
 
 
   async findAreaByName(name: string): Promise<areas> {
-    const areaFound = await this.prisma.areas.findFirst({
+    const areaFound = await this.prisma.areas.findUnique({
       where: { name: name }
     });
     if (!areaFound) throw new BadRequestException('Area not found');

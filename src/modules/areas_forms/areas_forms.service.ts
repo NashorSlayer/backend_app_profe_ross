@@ -5,6 +5,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { AreaService } from '../area/area.service';
 import { FormService } from '../forms/forms.service';
 import { IAreasForm } from 'src/interfaces/interface';
+import { DeleteAreaFormsDto } from './dto/delete-area_forms.sto';
 
 @Injectable()
 export class AreasFormsService {
@@ -93,25 +94,27 @@ export class AreasFormsService {
   findAll() {
     return this.prismaService.areas_forms.findMany(
       {
-        include: {
+        select: {
           area: {
             select: {
               name: true
             }
           },
           forms: {
-            include: {
+            select: {
+              title: true,
+              description: true,
               user: {
                 select: {
                   username: true,
                   email: true,
                 }
               }
-            },
-          },
-        },
-      });
-  }
+            }
+          }
+        }
+      })
+  };
 
   async findAreasByFormId(id: string) {
     const formFound = await this.formService.findOne(id);
@@ -138,16 +141,25 @@ export class AreasFormsService {
 
   }
 
-  async removeOneAreaFromForm(id: string, area: string) {
+  async removeOneAreaFromForm(id: string, deleteAreaFormsDto: DeleteAreaFormsDto) {
+    const { name } = deleteAreaFormsDto.Area;
+
     const formFound = await this.formService.findOne(id);
     if (!formFound) throw new BadRequestException('Form not found');
 
 
-    const areasFound = await this.areaService.findAreaByName(area);
+    const areasFound = await this.areaService.findAreaByName(name);
     if (!areasFound) throw new BadRequestException('Areas not found');
 
     try {
-      return null
+      return await this.prismaService.areas_forms.delete({
+        where: {
+          form_id_area_id: {
+            form_id: formFound.id,
+            area_id: areasFound.id
+          }
+        }
+      })
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

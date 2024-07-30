@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { AreasFormsService } from './areas_forms.service';
 import { CreateAreasFormsDto } from './dto/create-areas_forms.dto';
 import { UpdateAreasFormsDto } from './dto/update-areas_forms.dto';
+import { DeleteAreaFormsDto } from './dto/delete-area_forms.sto';
 
 @Controller('areas-forms')
 export class AreasFormsController {
@@ -28,7 +29,7 @@ export class AreasFormsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Body() area: string) {
-    return this.areasFormsService.removeOneAreaFromForm(id, area);
+  remove(@Param('id') id: string, @Body() deleteAreaFormsDto: DeleteAreaFormsDto) {
+    return this.areasFormsService.removeOneAreaFromForm(id, deleteAreaFormsDto);
   }
 }
