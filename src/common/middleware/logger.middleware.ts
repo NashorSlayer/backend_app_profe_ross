@@ -9,7 +9,6 @@ export class LoggerMiddleware implements NestMiddleware {
         const month = new Date().getMonth();
         const year = new Date().getFullYear();
         const message = `method: ${method} | path${originalUrl} | ip: ${req.ip}`;
-        console.log(message);
         next();
     }
 }

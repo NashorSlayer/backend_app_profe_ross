@@ -3,7 +3,7 @@ import { AreaService } from './area.service';
 import { CreateAreaDto } from './dto/create-area.dto';
 import { UpdateAreaDto } from './dto/update-area.dto';
 
-@Controller('area')
+@Controller('areas')
 export class AreaController {
   constructor(private readonly areaService: AreaService) { }
 

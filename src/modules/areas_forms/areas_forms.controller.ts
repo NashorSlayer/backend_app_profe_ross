@@ -18,8 +18,8 @@ export class AreasFormsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.areasFormsService.findOne(id);
+  findAreasByFormId(@Param('id') id: string) {
+    return this.areasFormsService.findAreasByFormId(id);
   }
 
   @Patch(':id')
@@ -28,7 +28,7 @@ export class AreasFormsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.areasFormsService.remove(id);
+  remove(@Param('id') id: string, @Body() areas: string[]) {
+    return this.areasFormsService.remove(id, areas);
   }
 }

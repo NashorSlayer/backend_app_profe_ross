@@ -1,6 +1,13 @@
-import { IArea, IForm } from "../../../interfaces/interface";
+import { IsNotEmpty } from "class-validator"
 
 export class CreateAreasFormsDto {
-    Form: IForm
-    Area: IArea
+
+    @IsNotEmpty()
+    Form: {
+        id: string
+    }
+    @IsNotEmpty()
+    Area: {
+        name: string
+    }
 }

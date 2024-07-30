@@ -17,6 +17,16 @@ export class UserService {
     return bcrypt.hash(password, saltRounds);
   }
 
+  async UserExistByEmail(email: string): Promise<boolean> {
+    const userFound = await this.prisma.users.findFirst({
+      where: {
+        email: email
+      }
+    });
+    if (userFound) return true;
+    return false;
+  }
+
   async getUserByEmail(email: string): Promise<IUser> {
     const userFound = await this.prisma.users.findUnique({
       where: {
@@ -34,7 +44,7 @@ export class UserService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<IUser> {
-    const userExists = await this.getUserByEmail(createUserDto.email);
+    const userExists = await this.UserExistByEmail(createUserDto.email);
     if (userExists) {
       throw new BadRequestException('User already exists');
     } else {
