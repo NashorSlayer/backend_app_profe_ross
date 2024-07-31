@@ -127,6 +127,11 @@ export class AreasFormsService {
         },
       },
       select: {
+        forms: {
+          select: {
+            id: true,
+          },
+        },
         area: {
           select: {
             name: true

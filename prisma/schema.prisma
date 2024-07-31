@@ -48,12 +48,11 @@ model areas_forms {
 }
 
 model answers {
+  id      String @id @default(uuid())
   form_id String
   area_id String
   time    Int
 
   forms forms @relation(fields: [form_id], references: [id])
   area  areas @relation(fields: [area_id], references: [id])
-
-  @@id([form_id, area_id])
 }
