@@ -17,6 +17,11 @@ export class AnswerController {
     return this.answerService.findAll();
   }
 
+  @Get('areasByIdForm/:id')
+  findAreasByIdForm(@Param('id') id: string) {
+    return this.answerService.findAnswersByIdForm(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.answerService.findOne(id);
