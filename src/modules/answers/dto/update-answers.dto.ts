@@ -1,9 +1,10 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateAnswersDto } from './create-answers.dto';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 
 export class UpdateAnswersDto extends PartialType(CreateAnswersDto) {
-    Area: {
-        name: string
-    }
-    time?: number;
+
+    @IsNotEmpty()
+    @IsEmail()
+    mail: string;
 }

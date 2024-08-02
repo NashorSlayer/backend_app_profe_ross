@@ -1,17 +1,14 @@
-import { IsNotEmpty, IsNumber } from "class-validator";
+import { IsEmail, IsNotEmpty } from "class-validator";
 
 export class CreateAnswersDto {
+    @IsNotEmpty()
+    @IsEmail()
+    mail: string;
+
     @IsNotEmpty()
     Form: {
         id: string
     }
 
-    @IsNotEmpty()
-    Area: {
-        name: string
-    }
 
-    @IsNotEmpty()
-    @IsNumber()
-    time: number
 }

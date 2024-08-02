@@ -30,8 +30,8 @@ export class AreaController {
   }
   @HttpCode(HttpStatus.OK)
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return await this.areaService.findOne(id);
+  async findOne(@Param('id') id: string, @Body() form_id: string) {
+    return await this.areaService.findOne(form_id, id);
   }
   @HttpCode(HttpStatus.OK)
   @Patch(':id')
@@ -40,8 +40,8 @@ export class AreaController {
   }
   @HttpCode(HttpStatus.OK)
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return await this.areaService.remove(id);
+  async remove(@Param('id') id: string, @Body() form_id: string) {
+    return await this.areaService.remove(form_id, id);
   }
 
 }

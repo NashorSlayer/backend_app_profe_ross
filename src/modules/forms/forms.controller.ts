@@ -22,7 +22,7 @@ export class FormController {
   @HttpCode(HttpStatus.OK)
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.formService.findOne(id);
+    return this.formService.findOneById(id);
   }
 
   @HttpCode(HttpStatus.OK)

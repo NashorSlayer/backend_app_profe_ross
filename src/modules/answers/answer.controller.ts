@@ -17,14 +17,9 @@ export class AnswerController {
     return this.answerService.findAll();
   }
 
-  @Get('areasByIdForm/:id')
-  findAreasByIdForm(@Param('id') id: string) {
-    return this.answerService.findAnswersByIdForm(id);
-  }
-
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.answerService.findOne(id);
+  findOne(@Param('id') id: string, @Body() mail: string) {
+    return this.answerService.findOne(id, mail);
   }
 
   @Patch(':id')
@@ -33,7 +28,7 @@ export class AnswerController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.answerService.remove(id);
+  remove(@Param('id') id: string, @Body() mail: string) {
+    return this.answerService.remove(id, mail);
   }
 }
