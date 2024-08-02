@@ -41,7 +41,6 @@ export class FormService {
         description: true,
         date_start: true,
         date_end: true,
-        disabled: true,
         user: {
           select: {
             username: true,
@@ -61,7 +60,6 @@ export class FormService {
         description: true,
         date_start: true,
         date_end: true,
-        disabled: true,
         user: {
           select: {
             username: true,
@@ -82,7 +80,6 @@ export class FormService {
         description: true,
         date_start: true,
         date_end: true,
-        disabled: true,
         user: {
           select: {
             username: true,
@@ -99,7 +96,7 @@ export class FormService {
     const formFound = await this.findOne(id)
     if (!formFound) throw new BadRequestException("Form not found")
 
-    const { title, description, date_start, date_end, disabled } = updateFormDTO
+    const { title, description, date_start, date_end} = updateFormDTO
 
     if (date_end < date_start) throw new BadRequestException("Date end must be greater than date start")
 
@@ -111,7 +108,6 @@ export class FormService {
         description: description,
         date_start: date_start,
         date_end: date_end,
-        disabled: disabled
       },
       select: {
         id: true,
@@ -119,7 +115,6 @@ export class FormService {
         description: true,
         date_start: true,
         date_end: true,
-        disabled: true,
         user: {
           select: {
             email: true,
@@ -142,7 +137,6 @@ export class FormService {
         description: true,
         date_start: true,
         date_end: true,
-        disabled: true,
         user: {
           select: {
             username: true,

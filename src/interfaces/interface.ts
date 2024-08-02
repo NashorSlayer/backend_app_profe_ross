@@ -17,7 +17,6 @@ export interface IForm {
     date_start: Date;
     date_end: Date;
     user: IUser;
-    disabled: boolean;
 }
 
 export interface IAnswer {

@@ -9,6 +9,5 @@ export class CreateUserDto {
     email: string;
 
     @IsNotEmpty()
-    @Max(10, { message: 'Password is too long' })
     password: string;
 }

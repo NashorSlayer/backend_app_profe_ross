@@ -1,4 +1,14 @@
-import { Controller, Req, Get, Post, Body, Patch, Param, Delete, HttpCode, Header, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus
+} from '@nestjs/common';
 import { AreaService } from './area.service';
 import { CreateAreaDto } from './dto/create-area.dto';
 import { UpdateAreaDto } from './dto/update-area.dto';
@@ -15,7 +25,7 @@ export class AreaController {
 
   @HttpCode(HttpStatus.OK)
   @Get()
-  async findAll(@Req() req: Request) {
+  async findAll() {
     return await this.areaService.findAll();
   }
   @HttpCode(HttpStatus.OK)

@@ -9,8 +9,8 @@ export class FormController {
 
   @HttpCode(HttpStatus.CREATED)
   @Post()
-  create(@Body() createSurveyDto: CreateFormDto) {
-    return this.formService.create(createSurveyDto);
+  create(@Body() createFormDto: CreateFormDto) {
+    return this.formService.create(createFormDto);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -27,8 +27,8 @@ export class FormController {
 
   @HttpCode(HttpStatus.OK)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSurveyDto: UpdateFormDto) {
-    return this.formService.update(id, updateSurveyDto);
+  update(@Param('id') id: string, @Body() updateFormDto: UpdateFormDto) {
+    return this.formService.update(id, updateFormDto);
   }
 
   @HttpCode(HttpStatus.OK)

@@ -22,37 +22,44 @@ model forms {
   description String
   date_start  DateTime
   date_end    DateTime
-  user        users    @relation(fields: [user_id], references: [id])
-  user_id     String
-  disabled    Boolean  @default(false)
+  user        users    @relation(fields: [creator_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  creator_id  String
 
-  areas         areas_forms[]
-  answers_areas answers[]
+  areas   areas[]
+  answers answers[]
+
+  @@unique([title, creator_id])
 }
 
 model areas {
-  id            String        @id @default(uuid())
-  name          String        @unique
-  forms         areas_forms[]
-  answers_forms answers[]
-}
-
-model areas_forms {
+  id      String @id @default(uuid())
+  name    String
   form_id String
-  area_id String
 
-  forms forms @relation(fields: [form_id], references: [id])
-  area  areas @relation(fields: [area_id], references: [id])
+  form        forms         @relation(fields: [form_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  times_areas times_areas[]
 
-  @@id([form_id, area_id])
+  @@unique([name, form_id])
 }
 
 model answers {
   id      String @id @default(uuid())
+  mail    String
   form_id String
-  area_id String
-  time    Int
 
-  forms forms @relation(fields: [form_id], references: [id])
-  area  areas @relation(fields: [area_id], references: [id])
+  form        forms         @relation(fields: [form_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  times_areas times_areas[]
+
+  @@unique([mail, form_id])
+}
+
+model times_areas {
+  id         String @id @default(uuid())
+  time_start Float
+  time_end   Float
+  area_id    String
+  answer_id  String
+
+  answer answers @relation(fields: [answer_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  area   areas   @relation(fields: [area_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

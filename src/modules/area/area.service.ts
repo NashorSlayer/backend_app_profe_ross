@@ -3,12 +3,14 @@ import { CreateAreaDto } from './dto/create-area.dto';
 import { UpdateAreaDto } from './dto/update-area.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { areas } from '@prisma/client';
+import { FormService } from '../forms/forms.service';
 
 @Injectable()
 export class AreaService {
 
   constructor(
     private prisma: PrismaService,
+    private formService: FormService
   ) { }
 
   async ExistsAreaByName(name: string): Promise<boolean> {
@@ -21,11 +23,7 @@ export class AreaService {
 
 
   async findAreaByName(name: string): Promise<areas> {
-    const areaFound = await this.prisma.areas.findUnique({
-      where: { name: name }
-    });
-    if (!areaFound) throw new BadRequestException('Area not found');
-    return areaFound;
+    return null
   }
 
   async create(createAreaDto: CreateAreaDto): Promise<areas> {
@@ -33,7 +31,14 @@ export class AreaService {
     if (area) throw new BadRequestException('Area already exists');
     try {
       return await this.prisma.areas.create({
-        data: { name: createAreaDto.name }
+        data: {
+          name: createAreaDto.name,
+          form: {
+            connect: {
+              id: createAreaDto.Form.id
+            }
+          }
+        }
       });
     } catch (error) {
       throw new BadRequestException(error.message);
