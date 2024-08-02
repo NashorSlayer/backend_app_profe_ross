@@ -6,13 +6,12 @@ import { UserModule } from './modules/user/user.module';
 import { AreaModule } from './modules/area/area.module';
 import { FormModule } from './modules/forms/forms.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { AreasFormsModule } from './modules/areas_forms/areas_forms.module';
 import { AnswerModule } from './modules/answers/answer.module';
 
 
 
 @Module({
-  imports: [UserModule, AreaModule, FormModule, AuthModule, AreasFormsModule, AnswerModule],
+  imports: [UserModule, AreaModule, FormModule, AuthModule, AnswerModule],
   controllers: [AppController],
   providers: [AppService],
 })

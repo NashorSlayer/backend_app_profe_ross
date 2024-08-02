@@ -5,11 +5,6 @@ export interface IUser {
     password?: string;
 }
 
-export interface IArea {
-    id?: string;
-    name: string;
-}
-
 export interface IForm {
     id?: string;
     title: string;
@@ -19,15 +14,22 @@ export interface IForm {
     user: IUser;
 }
 
-export interface IAnswer {
+export interface IArea {
     id?: string;
-    User: IUser;
-    area: IArea;
-    time: number;
+    name: string;
+    form: IForm;
 }
 
-export interface IAreasForm {
+export interface IAnswer {
     id?: string;
+    mail: string;
     form: IForm;
+}
+
+export interface Itimes_areas {
+    id?: string;
+    time_start: number;
+    time_end: number;
     area: IArea;
+    answer: IAnswer;
 }

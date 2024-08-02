@@ -6,4 +6,9 @@ export class UpdateAreaDto extends PartialType(CreateAreaDto) {
 
     @IsNotEmpty()
     name: string;
+
+    @IsNotEmpty()
+    Form: {
+        id: string
+    }
 }
