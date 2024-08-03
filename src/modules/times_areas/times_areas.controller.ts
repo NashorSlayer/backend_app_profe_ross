@@ -5,7 +5,7 @@ import { UpdateTimesAreaDto } from './dto/update-times_area.dto';
 
 @Controller('times-areas')
 export class TimesAreasController {
-  constructor(private readonly timesAreasService: TimesAreasService) {}
+  constructor(private readonly timesAreasService: TimesAreasService) { }
 
   @Post()
   create(@Body() createTimesAreaDto: CreateTimesAreaDto) {
@@ -19,16 +19,16 @@ export class TimesAreasController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.timesAreasService.findOne(+id);
+    return this.timesAreasService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateTimesAreaDto: UpdateTimesAreaDto) {
-    return this.timesAreasService.update(+id, updateTimesAreaDto);
+    return this.timesAreasService.update(id, updateTimesAreaDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.timesAreasService.remove(+id);
+    return this.timesAreasService.remove(id);
   }
 }

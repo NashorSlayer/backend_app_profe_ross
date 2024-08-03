@@ -1,11 +1,4 @@
-import { IsDateString, IsNotEmpty, Validate } from "class-validator";
-
-export function validateDate(date: Date) {
-    if (date < new Date()) {
-        return false;
-    }
-    return true;
-}
+import { IsNotEmpty } from "class-validator";
 
 export class CreateFormDto {
     @IsNotEmpty({ message: "Title is required" })
@@ -15,13 +8,9 @@ export class CreateFormDto {
     description: string;
 
     @IsNotEmpty({ message: "Date start is required" })
-    @IsDateString()
-    @Validate((value: Date) => validateDate(value))
     date_start: Date;
 
     @IsNotEmpty({ message: "Date end is required" })
-    @IsDateString()
-    @Validate((value: Date) => validateDate(value))
     date_end: Date;
 
     @IsNotEmpty({ message: "User is required" })

@@ -8,5 +8,6 @@ import { FormModule } from '../forms/forms.module';
   imports: [PrismaModule, FormModule],
   controllers: [AnswerController],
   providers: [AnswerService],
+  exports: [AnswerService]
 })
 export class AnswerModule { }

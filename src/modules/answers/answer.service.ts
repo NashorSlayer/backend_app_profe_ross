@@ -1,9 +1,11 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateAnswersDto } from './dto/create-answers.dto';
 import { UpdateAnswersDto } from './dto/update-answers.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { FormService } from '../forms/forms.service';
 import { IAnswer } from 'src/interfaces/interface';
+import { selectAnswers } from '../../querys/answers.query';
+import { AnswersExceptions, FormsExceptions } from 'src/utils/exceptions';
 
 @Injectable()
 export class AnswerService {
@@ -29,10 +31,10 @@ export class AnswerService {
 
   async create(createAnswerDto: CreateAnswersDto): Promise<IAnswer> {
     const formFound = await this.formSevice.findOneById(createAnswerDto.Form.id);
-    if (!formFound) throw new BadRequestException('Form not found');
+    if (!formFound) FormsExceptions.NOT_FOUND;
 
     const answerExists = await this.AnswerExists(formFound.id, createAnswerDto.mail);
-    if (answerExists) throw new BadRequestException('Answer already exists');
+    if (answerExists) AnswersExceptions.ALREADY_EXISTS;
 
     try {
       return await this.prismaService.answers.create({
@@ -45,21 +47,7 @@ export class AnswerService {
           }
         },
         select: {
-          mail: true,
-          form: {
-            select: {
-              title: true,
-              description: true,
-              date_start: true,
-              date_end: true,
-              user: {
-                select: {
-                  email: true,
-                  username: true
-                }
-              }
-            }
-          },
+          ...selectAnswers
         }
       })
     } catch (error) {
@@ -70,53 +58,25 @@ export class AnswerService {
   async findAll(): Promise<IAnswer[]> {
     return await this.prismaService.answers.findMany({
       select: {
-        mail: true,
-        form: {
-          select: {
-            title: true,
-            description: true,
-            date_start: true,
-            date_end: true,
-            user: {
-              select: {
-                email: true,
-                username: true
-              }
-            }
-          }
-        }
+        ...selectAnswers
       }
     });
   }
 
-  async findOne(id: string, mail: string): Promise<IAnswer> {
+  async findOneByFormAndMail(form_id: string, mail: string): Promise<IAnswer> {
     try {
       const answer = await this.prismaService.answers.findUnique({
         where: {
           mail_form_id: {
             mail: mail,
-            form_id: id
+            form_id: form_id
           }
         },
         select: {
-          mail: true,
-          form: {
-            select: {
-              title: true,
-              description: true,
-              date_start: true,
-              date_end: true,
-              user: {
-                select: {
-                  email: true,
-                  username: true
-                }
-              }
-            }
-          }
+          ...selectAnswers
         }
       });
-      if (!answer) throw new BadRequestException('Answer not found');
+      if (!answer) AnswersExceptions.NOT_FOUND;
       return answer;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
@@ -124,9 +84,28 @@ export class AnswerService {
 
   }
 
+  async findOne(id: string): Promise<IAnswer> {
+    try {
+      const answer = await this.prismaService.answers.findUnique({
+        where: {
+          id: id
+        },
+        select: {
+          ...selectAnswers
+        }
+      })
+      if (!answer) AnswersExceptions.NOT_FOUND;
+      return answer;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+
+  }
+
+
   async update(id: string, updateAnswerDto: UpdateAnswersDto) {
-    const answer = await this.findOne(id, updateAnswerDto.mail);
-    if (!answer) throw new BadRequestException('Answer not found');
+    const answer = await this.findOneByFormAndMail(id, updateAnswerDto.mail);
+    if (!answer) AnswersExceptions.NOT_FOUND;
 
     try {
       return this.prismaService.answers.update({
@@ -140,21 +119,7 @@ export class AnswerService {
           mail: updateAnswerDto.mail
         },
         select: {
-          mail: true,
-          form: {
-            select: {
-              title: true,
-              description: true,
-              date_start: true,
-              date_end: true,
-              user: {
-                select: {
-                  email: true,
-                  username: true
-                }
-              }
-            }
-          }
+          ...selectAnswers
         }
       })
     } catch (error) {
@@ -162,29 +127,17 @@ export class AnswerService {
     }
   }
 
-  async remove(id: string, title: string) {
-    const answer = await this.findOne(id, title);
-    if (!answer) throw new BadRequestException('Answer not found');
+  async remove(id: string) {
+
+    const answer = await this.findOne(id);
+    if (!answer) AnswersExceptions.NOT_FOUND;
     try {
       return this.prismaService.answers.delete({
         where: {
           id: id
         },
         select: {
-          form: {
-            select: {
-              title: true,
-              description: true,
-              date_start: true,
-              date_end: true,
-              user: {
-                select: {
-                  email: true,
-                  username: true
-                }
-              }
-            }
-          }
+          ...selectAnswers
         }
       });
     } catch (error) {

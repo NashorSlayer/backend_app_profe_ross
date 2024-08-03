@@ -1,22 +1,22 @@
-import { IsNotEmpty, IsPositive } from "class-validator";
+import { IsNotEmpty, IsNumber, IsNumberString } from "class-validator";
 
 export class CreateTimesAreaDto {
 
-    @IsNotEmpty()
-    @IsPositive()
+    @IsNumber({}, { message: 'Time Start must be a number' })
     time_start: number;
 
-    @IsNotEmpty()
-    @IsPositive()
+    @IsNumber({}, { message: 'Time End must be a number' })
     time_end: number;
 
-    @IsNotEmpty()
+    @IsNotEmpty({ message: 'Area ID is required' })
     Area: {
         id: string;
     }
 
-    @IsNotEmpty()
+    @IsNotEmpty({ message: 'Answer ID is required' })
     Answer: {
         id: string;
     }
+
+
 }

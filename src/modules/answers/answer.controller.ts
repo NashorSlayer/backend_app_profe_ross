@@ -18,8 +18,8 @@ export class AnswerController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Body() mail: string) {
-    return this.answerService.findOne(id, mail);
+  findOne(@Param('id') id: string) {
+    return this.answerService.findOne(id);
   }
 
   @Patch(':id')
@@ -28,7 +28,7 @@ export class AnswerController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Body() mail: string) {
-    return this.answerService.remove(id, mail);
+  remove(@Param('id') id: string) {
+    return this.answerService.remove(id);
   }
 }

@@ -4,6 +4,8 @@ import { UpdateFormDto } from './dto/update-form.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserService } from '../user/user.service';
 import { IForm } from 'src/interfaces/interface';
+import { FormsExceptions, UserExceptions } from 'src/utils/exceptions';
+import { selectForms } from 'src/querys/form.query';
 
 @Injectable()
 export class FormService {
@@ -19,12 +21,16 @@ export class FormService {
     const { title, description, date_start, date_end } = createSurveyDto
 
     const userFound = await this.userService.findOne(createSurveyDto.user.id)
-    if (!userFound) throw new BadRequestException("User not found")
+    if (!userFound) UserExceptions.NOT_FOUND
 
-    if (date_end < date_start) throw new BadRequestException("Date end must be greater than date start")
+    const currentDate = new Date()
 
     const dateStartFormated = new Date(date_start)
     const dateEndFormated = new Date(date_end)
+
+    if (dateStartFormated < currentDate) FormsExceptions.DATE_START_MUST_BE_GREATER
+    if (dateEndFormated < currentDate) FormsExceptions.DATE_END_MUST_BE_GREATER
+    if (dateEndFormated < dateStartFormated) FormsExceptions.DATE_END_MUST_BE_GREATER_THAN_DATE_START
 
     try {
       const form = await this.prismaService.forms.create({
@@ -38,17 +44,7 @@ export class FormService {
           }
         },
         select: {
-          id: true,
-          title: true,
-          description: true,
-          date_start: true,
-          date_end: true,
-          user: {
-            select: {
-              username: true,
-              email: true
-            }
-          }
+          ...selectForms
         }
       });
       return form
@@ -87,20 +83,10 @@ export class FormService {
           id: id
         },
         select: {
-          id: true,
-          title: true,
-          description: true,
-          date_start: true,
-          date_end: true,
-          user: {
-            select: {
-              username: true,
-              email: true
-            }
-          },
+          ...selectForms
         }
       });
-      if (!form) throw new BadRequestException("Form not found")
+      if (!form) FormsExceptions.NOT_FOUND
       return form
     } catch (error) {
       throw new InternalServerErrorException(error.message)
@@ -114,7 +100,7 @@ export class FormService {
 
     const { title, description, date_start, date_end } = updateFormDTO
 
-    if (date_end < date_start) throw new BadRequestException("Date end must be greater than date start")
+    if (date_end < date_start) FormsExceptions.DATE_END_MUST_BE_GREATER_THAN_DATE_START
 
     try {
       const updateForm = this.prismaService.forms.update({
@@ -126,17 +112,7 @@ export class FormService {
           date_end: date_end,
         },
         select: {
-          id: true,
-          title: true,
-          description: true,
-          date_start: true,
-          date_end: true,
-          user: {
-            select: {
-              email: true,
-              username: true
-            }
-          }
+          ...selectForms
         }
       })
       return updateForm
@@ -147,23 +123,13 @@ export class FormService {
 
   async remove(id: string): Promise<IForm> {
     const formFound = await this.findOneById(id)
-    if (!formFound) throw new BadRequestException("Form not found")
+    if (!formFound) FormsExceptions.NOT_FOUND
 
     try {
       return await this.prismaService.forms.delete({
         where: { id: id },
         select: {
-          id: true,
-          title: true,
-          description: true,
-          date_start: true,
-          date_end: true,
-          user: {
-            select: {
-              username: true,
-              email: true
-            }
-          }
+          ...selectForms
         }
       });
     } catch (error) {

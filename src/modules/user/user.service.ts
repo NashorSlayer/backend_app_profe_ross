@@ -4,6 +4,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { IUser } from 'src/interfaces/interface';
+import { UserExceptions } from 'src/utils/exceptions';
+import { selectUser } from '../../querys/user.query';
 
 @Injectable()
 export class UserService {
@@ -33,20 +35,17 @@ export class UserService {
         email: email
       },
       select: {
-        id: true,
-        email: true,
-        username: true,
-        password: true
+        ...selectUser
       }
     });
-    if (!userFound) throw new BadRequestException('User does not exist');
+    if (!userFound) UserExceptions.NOT_FOUND;
     return userFound;
   }
 
   async create(createUserDto: CreateUserDto): Promise<IUser> {
     const userExists = await this.UserExistByEmail(createUserDto.email);
     if (userExists) {
-      throw new BadRequestException('User already exists');
+      UserExceptions.ALREADY_EXISTS;
     } else {
       const hashedPassword = await this.hashPassword(createUserDto.password);
       const user = await this.prisma.users.create({
@@ -56,9 +55,7 @@ export class UserService {
           password: hashedPassword
         },
         select: {
-          id: true,
-          email: true,
-          username: true,
+          ...selectUser
         }
       });
       return user;
@@ -68,9 +65,7 @@ export class UserService {
   async findAll(): Promise<IUser[]> {
     return await this.prisma.users.findMany({
       select: {
-        id: true,
-        email: true,
-        username: true,
+        ...selectUser
       }
     });
   }
@@ -81,9 +76,7 @@ export class UserService {
         id: id
       },
       select: {
-        id: true,
-        email: true,
-        username: true,
+        ...selectUser
       }
     });
     if (!userFound) throw new BadRequestException('User does not exist');
@@ -103,9 +96,7 @@ export class UserService {
       },
       data: updateUserDto,
       select: {
-        id: true,
-        email: true,
-        username: true,
+        ...selectUser
       }
     });
   }
@@ -118,9 +109,7 @@ export class UserService {
         id: userFound.id
       },
       select: {
-        id: true,
-        email: true,
-        username: true,
+        ...selectUser
       }
     })
     return user;

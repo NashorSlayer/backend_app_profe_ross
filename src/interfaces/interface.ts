@@ -26,10 +26,40 @@ export interface IAnswer {
     form: IForm;
 }
 
-export interface Itimes_areas {
+export interface ITimes_areas {
     id?: string;
     time_start: number;
     time_end: number;
     area: IArea;
     answer: IAnswer;
+}
+
+//-------------------------------------------------
+
+export interface IGetTimesAreas {
+    time_start: number;
+    time_end: number;
+    area: {
+        name: IArea["name"];
+    }
+    answer: {
+        mail: IAnswer["mail"];
+        form: {
+            title: IForm["title"];
+        }
+    }
+}
+
+export interface IGetAreas {
+    name: IArea["name"];
+    form: {
+        title: IForm["title"];
+        description: IForm["description"];
+        date_start: IForm["date_start"];
+        date_end: IForm["date_end"];
+        user: {
+            email: IUser["email"];
+            username: IUser["username"];
+        }
+    }
 }
