@@ -1,9 +1,9 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateAnswersDto } from './dto/create-answers.dto';
 import { UpdateAnswersDto } from './dto/update-answers.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { FormService } from '../forms/forms.service';
-import { IAnswer } from 'src/interfaces/interface';
+import { IAnswer } from 'src/interfaces/answer.interface';
 import { selectAnswers } from '../../querys/answers.query';
 import { AnswersExceptions, FormsExceptions } from 'src/utils/exceptions';
 
@@ -30,7 +30,10 @@ export class AnswerService {
   }
 
   async create(createAnswerDto: CreateAnswersDto): Promise<IAnswer> {
-    const formFound = await this.formSevice.findOneById(createAnswerDto.Form.id);
+
+    const { mail, Form } = createAnswerDto;
+
+    const formFound = await this.formSevice.findOneById(Form.id);
     if (!formFound) FormsExceptions.NOT_FOUND;
 
     const answerExists = await this.AnswerExists(formFound.id, createAnswerDto.mail);
@@ -39,7 +42,7 @@ export class AnswerService {
     try {
       return await this.prismaService.answers.create({
         data: {
-          mail: createAnswerDto.mail,
+          mail: mail,
           form: {
             connect: {
               id: formFound.id
@@ -81,7 +84,6 @@ export class AnswerService {
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
-
   }
 
   async findOne(id: string): Promise<IAnswer> {

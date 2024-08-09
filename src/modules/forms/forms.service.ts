@@ -3,9 +3,9 @@ import { CreateFormDto } from './dto/create-form.dto';
 import { UpdateFormDto } from './dto/update-form.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserService } from '../user/user.service';
-import { IForm } from 'src/interfaces/interface';
 import { FormsExceptions, UserExceptions } from 'src/utils/exceptions';
-import { selectForms } from 'src/querys/form.query';
+import { selectFormWithoutId, selectFormsWithId, selectTitlesByUser } from 'src/querys/form.query';
+import { IForm, IGetTitlesForm } from 'src/interfaces/form.interface';
 
 @Injectable()
 export class FormService {
@@ -15,12 +15,11 @@ export class FormService {
     private readonly userService: UserService
   ) { }
 
-  //TODO: implementar findByTitle(title: string, creator_id: string): Promise<IForm>
+  async create(createFormDto: CreateFormDto): Promise<IForm> {
+    const { title, description, date_start, date_end, type, range } = createFormDto
 
-  async create(createSurveyDto: CreateFormDto): Promise<IForm> {
-    const { title, description, date_start, date_end } = createSurveyDto
 
-    const userFound = await this.userService.findOne(createSurveyDto.user.id)
+    const userFound = await this.userService.findOne(createFormDto.user.id)
     if (!userFound) UserExceptions.NOT_FOUND
 
     const currentDate = new Date()
@@ -39,12 +38,14 @@ export class FormService {
           description: description,
           date_start: dateStartFormated,
           date_end: dateEndFormated,
+          type: type,
+          range: range,
           user: {
             connect: { id: userFound.id }
           }
         },
         select: {
-          ...selectForms
+          ...selectFormWithoutId
         }
       });
       return form
@@ -58,17 +59,7 @@ export class FormService {
     try {
       return await this.prismaService.forms.findMany({
         select: {
-          id: true,
-          title: true,
-          description: true,
-          date_start: true,
-          date_end: true,
-          user: {
-            select: {
-              username: true,
-              email: true
-            }
-          },
+          ...selectFormsWithId
         },
       });
     } catch (error) {
@@ -83,7 +74,7 @@ export class FormService {
           id: id
         },
         select: {
-          ...selectForms
+          ...selectFormsWithId
         }
       });
       if (!form) FormsExceptions.NOT_FOUND
@@ -91,8 +82,32 @@ export class FormService {
     } catch (error) {
       throw new InternalServerErrorException(error.message)
     }
-
   }
+
+  async findOneByTitleAndMail(title: string, email: string): Promise<IGetTitlesForm> {
+    const userFound = await this.userService.findOneByEmail(email)
+    if (!userFound) UserExceptions.NOT_FOUND
+
+    try {
+      const form = await this.prismaService.forms.findUnique({
+        where: {
+          title_creator_id: {
+            title: title,
+            creator_id: userFound.id
+          }
+        },
+        select: {
+          ...selectTitlesByUser
+        }
+      })
+      if (!form) FormsExceptions.NOT_FOUND
+      return form
+    } catch (error) {
+      throw new InternalServerErrorException(error.message)
+    }
+  }
+
+
 
   async update(id: string, updateFormDTO: UpdateFormDto): Promise<IForm> {
     const formFound = await this.findOneById(id)
@@ -112,7 +127,7 @@ export class FormService {
           date_end: date_end,
         },
         select: {
-          ...selectForms
+          ...selectFormWithoutId
         }
       })
       return updateForm
@@ -129,7 +144,7 @@ export class FormService {
       return await this.prismaService.forms.delete({
         where: { id: id },
         select: {
-          ...selectForms
+          ...selectFormsWithId
         }
       });
     } catch (error) {

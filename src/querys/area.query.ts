@@ -7,6 +7,8 @@ export const selectAreas = {
             description: true,
             date_start: true,
             date_end: true,
+            type: true,
+            range: true,
             user: {
                 select: {
                     email: true,

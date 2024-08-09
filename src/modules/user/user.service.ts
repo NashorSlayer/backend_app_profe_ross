@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { IUser } from 'src/interfaces/interface';
+import { IUser } from 'src/interfaces/user.interface';
 import { UserExceptions } from 'src/utils/exceptions';
 import { selectUser } from '../../querys/user.query';
 
@@ -29,7 +29,7 @@ export class UserService {
     return false;
   }
 
-  async getUserByEmail(email: string): Promise<IUser> {
+  async findOneByEmail(email: string): Promise<IUser> {
     const userFound = await this.prisma.users.findUnique({
       where: {
         email: email
@@ -84,7 +84,7 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    const user = await this.getUserByEmail(updateUserDto.email);
+    const user = await this.findOneByEmail(updateUserDto.email);
     if (!user) throw new BadRequestException('User does not exist');
 
     if (updateUserDto.password) {
