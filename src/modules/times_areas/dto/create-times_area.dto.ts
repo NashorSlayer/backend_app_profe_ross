@@ -1,12 +1,12 @@
-import { IsNotEmpty, IsNumber, IsNumberString } from "class-validator";
+import { IsDate, IsNotEmpty, IsNumber, IsNumberString } from "class-validator";
 
 export class CreateTimesAreaDto {
 
-    @IsNumber({}, { message: 'Time Start must be a number' })
-    time_start: number;
+    @IsDate()
+    time_start: string;
 
-    @IsNumber({}, { message: 'Time End must be a number' })
-    time_end: number;
+    @IsDate()
+    time_end: string;
 
     @IsNotEmpty({ message: 'Area ID is required' })
     Area: {

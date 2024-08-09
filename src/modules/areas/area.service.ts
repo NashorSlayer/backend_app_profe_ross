@@ -3,7 +3,7 @@ import { CreateAreaDto } from './dto/create-area.dto';
 import { UpdateAreaDto } from './dto/update-area.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { FormService } from '../forms/forms.service';
-import { IArea } from 'src/interfaces/interface';
+import { IArea } from 'src/interfaces/area.interface';
 import { selectAreas } from '../../querys/area.query';
 import { AreasExceptions, FormsExceptions } from 'src/utils/exceptions';
 

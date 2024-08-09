@@ -1,19 +1,21 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateFormDto } from './create-form.dto';
-import { IsDateString, Validate, } from 'class-validator';
-
-
-
+import { IsDate, IsNumber } from 'class-validator';
 
 export class UpdateFormDto extends PartialType(CreateFormDto) {
 
-    title: string;
+    title?: string;
 
-    description: string;
+    description?: string;
 
-    @IsDateString()
-    date_start: Date;
+    @IsDate()
+    date_start?: string;
 
-    @IsDateString()
-    date_end: Date;
+    @IsDate()
+    date_end?: string;
+
+    type?: string;
+
+    @IsNumber()
+    range?: number;
 }

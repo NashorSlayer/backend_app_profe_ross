@@ -56,9 +56,9 @@ model answers {
 }
 
 model times_areas {
-  id         String @id @default(uuid())
-  time_start Float
-  time_end   Float
+  id         String   @id @default(uuid())
+  time_start DateTime
+  time_end   DateTime
   area_id    String
   answer_id  String
 

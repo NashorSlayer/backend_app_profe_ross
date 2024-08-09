@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus
 import { FormService } from './forms.service';
 import { CreateFormDto } from './dto/create-form.dto';
 import { UpdateFormDto } from './dto/update-form.dto';
+import { GetFormDto } from './dto/get-form.dto';
 
 @Controller('forms')
 export class FormController {
@@ -17,6 +18,13 @@ export class FormController {
   @Get()
   findAll() {
     return this.formService.findAll();
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('/by-title-and-mail')
+  findOneFormByTitleAndMail(@Body() getFormDto: GetFormDto) {
+    const { title, email } = getFormDto;
+    return this.formService.findOneByTitleAndMail(title, email);
   }
 
   @HttpCode(HttpStatus.OK)

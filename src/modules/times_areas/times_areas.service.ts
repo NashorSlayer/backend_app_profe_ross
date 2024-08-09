@@ -1,10 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateTimesAreaDto } from './dto/create-times_area.dto';
 import { UpdateTimesAreaDto } from './dto/update-times_area.dto';
 import { AreaService } from '../areas/area.service';
 import { AnswerService } from '../answers/answer.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { IGetTimesAreas } from 'src/interfaces/interface';
+import { IGetTimesAreas } from 'src/interfaces/times_areas.interface';
 import { selectTimesAreas } from "../../querys/times_areas.query"
 import { AnswersExceptions, AreasExceptions, TimesAreasExceptions } from 'src/utils/exceptions';
 
@@ -98,11 +98,6 @@ export class TimesAreasService {
         data: {
           time_start: updateTimesAreaDto.time_start,
           time_end: updateTimesAreaDto.time_end,
-          area: {
-            connect: {
-              id: updateTimesAreaDto.Area.id
-            }
-          },
         },
         select: {
           ...selectTimesAreas
