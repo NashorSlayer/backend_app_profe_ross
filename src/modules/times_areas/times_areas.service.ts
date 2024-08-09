@@ -24,22 +24,25 @@ export class TimesAreasService {
     const answerFound = await this.answerService.findOne(Answer.id);
     if (!answerFound) AnswersExceptions.NOT_FOUND;
 
-    const areaFound = await this.areaService.findOne(answerFound.form.id, Area.id);
+    const areaFound = await this.areaService.findAreaByName(answerFound.form.id, Area.name);
     if (!areaFound) AreasExceptions.NOT_FOUND;
+
+    const timeStartFormatted = new Date(time_start);
+    const timeEndFormatted = new Date(time_end);
 
     try {
       const timesArea = await this.prismaService.times_areas.create({
         data: {
-          time_start,
-          time_end,
+          time_start: timeStartFormatted,
+          time_end: timeEndFormatted,
           area: {
             connect: {
-              id: Area.id
+              id: areaFound.id
             },
           },
           answer: {
             connect: {
-              id: Answer.id
+              id: answerFound.id
             }
           }
         },
@@ -87,7 +90,7 @@ export class TimesAreasService {
     const answerFound = await this.answerService.findOne(id);
     if (!answerFound) AnswersExceptions.NOT_FOUND;
 
-    const areaFound = this.areaService.findOne(answerFound.form.id, updateTimesAreaDto.Area.id);
+    const areaFound = this.areaService.findAreaByName(answerFound.form.id, updateTimesAreaDto.Area.name);
     if (!areaFound) AreasExceptions.NOT_FOUND;
 
     try {

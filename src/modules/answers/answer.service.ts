@@ -42,7 +42,7 @@ export class AnswerService {
     try {
       return await this.prismaService.answers.create({
         data: {
-          mail: createAnswerDto.mail,
+          mail: mail,
           form: {
             connect: {
               id: formFound.id
@@ -84,7 +84,6 @@ export class AnswerService {
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
-
   }
 
   async findOne(id: string): Promise<IAnswer> {
