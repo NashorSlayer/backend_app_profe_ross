@@ -5,7 +5,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { IUser } from 'src/interfaces/user.interface';
 import { UserExceptions } from 'src/utils/exceptions';
-import { selectUser } from '../../querys/user.query';
+import { selectUser, selectUserWithPassword } from '../../querys/user.query';
 
 @Injectable()
 export class UserService {
@@ -35,7 +35,7 @@ export class UserService {
         email: email
       },
       select: {
-        ...selectUser
+        ...selectUserWithPassword
       }
     });
     if (!userFound) UserExceptions.NOT_FOUND;
